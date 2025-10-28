@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pengetik Soal</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+            min-height: 100vh;
+        }
+
+        .editor-panel {
+            width: 50%;
+            padding: 20px;
+            background: white;
+            overflow-y: auto;
+            border-right: 3px solid #002060;
+        }
+
+        .preview-panel {
+            width: 50%;
+            background: #f8f9fa;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        h1 {
+            color: #002060;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            background: #002060;
+            color: white;
+            padding: 10px 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #002060;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #002060;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #001040;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #002060;
+        }
+
+        .option-group {
+            margin-top: 10px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input-label {
+            background: #6c757d;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #5a6268;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .print-content {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            font-size: 12pt;
+        }
+
+        .kop-image {
+            width: 100%;
+            max-height: 120px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .identity-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #002060;
+        }
+
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 11pt;
+        }
+
+        .pg-columns {
+            columns: 2;
+            column-gap: 30px;
+            column-fill: balance;
+        }
+
+        .pg-item {
+            break-inside: avoid;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .matching-table {
+            margin: 15px 0;
+        }
+
+        .matching-box {
+            border: 1px solid #333;
+            height: 20px;
+            text-align: center;
+        }
+
+        .answer-space {
+            border-bottom: 1px solid #333;
+            height: 30px;
+            margin: 10px 0;
+        }
+
+        .answer-space-large {
+            height: 80px;
+        }
+
+        .question-image {
+            max-width: 100%;
+            max-height: 40px;
+            object-fit: contain;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .image-preview {
+            max-width: 100px;
+            max-height: 40px;
+            object-fit: contain;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .export-btn-container {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 20px;
+            border-top: 3px solid #002060;
+            text-align: center;
+        }
+
+        /* Print Styles - Optimized for printing */
+        @media print {
+            body {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .container {
+                display: block !important;
+            }
+            
+            .editor-panel {
+                display: none !important;
+            }
+            
+            .preview-panel {
+                width: 100% !important;
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            .print-content {
+                margin: 0 !important;
+                padding: 15mm !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                font-size: 11pt !important;
+            }
+            
+            .export-btn-container {
+                display: none !important;
+            }
+            
+            h1 {
+                display: none !important;
+            }
+            
+            .kop-image {
+                max-width: 100% !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .question-image {
+                max-height: 30px !important;
+            }
+            
+            .pg-columns {
+                column-gap: 20px !important;
+            }
+            
+            .pg-item {
+                margin-bottom: 10px !important;
+            }
+            
+            table {
+                font-size: 10pt !important;
+            }
+            
+            th, td {
+                padding: 5px !important;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        
+        /* Hide browser's default header and footer */
+        @media print {
+            @page {
+                margin: 15mm;
+                size: A4;
+            }
+            
+            /* Remove default browser headers/footers */
+            body {
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        .delete-btn {
+            margin-left: 10px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            display: inline;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Editor Panel -->
+        <div class="editor-panel">
+            <h1>Pengetik SoAL-HIKAM</h1>
+
+            <!-- KOP Sekolah -->
+            <div class="section">
+                <div class="section-title">HEADER SOAL</div>
+                <div class="form-group">
+                    <label>Upload KOP Sekolah</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="kop-upload">
+                            Upload KOP Soal
+                        </label>
+                        <input type="file" id="kop-upload" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                     <label>Judul Ujian</label>
+                     <input type="text" id="judul-ujian" placeholder="Contoh: ULANGAN AKHIR SEMESTER" value="ULANGAN AKHIR SEMESTER">
+                </div>
+
+                <div class="form-group">
+                    <label>Mata Pelajaran</label>
+                    <input type="text" id="mata-pelajaran" placeholder="Contoh: Fundamental Desain">
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <input type="text" id="kelas" placeholder="Contoh: X DKV">
+                </div>
+                <div class="form-group">
+                    <label>Waktu</label>
+                    <input type="text" id="waktu" placeholder="Contoh: 90 Menit">
+                </div>
+                <div class="form-group">
+                    <label>Semester / Tahun Ajaran</label>
+                    <input type="text" id="semester" placeholder="Contoh: Ganjil / 2025-2026">
+                </div>
+            </div>
+
+            <!-- A. Pilihan Ganda -->
+            <div class="section">
+                <div class="section-title">A. PILIHAN GANDA</div>
+                <div id="pg-container"></div>
+                <button class="btn gray" onclick="addPG()" style="width: 100%; margin-top: 10px;">+ Tambah Soal</button>
+            </div>
+
+            <!-- B. Benar-Salah -->
+            <div class="section">
+                <div class="section-title">B. BENAR-SALAH</div>
+                <div id="bs-container"></div>
+                <button class="btn gray" onclick="addBS()" style="width: 100%; margin-top: 10px;">+ Tambah Pernyataan</button>
+            </div>
+
+            <!-- C. Menjodohkan -->
+            <div class="section">
+                <div class="section-title">C. MENJODOHKAN</div>
+                <div id="menjodohkan-container">
+                    
+                    <div id="matching-items">
+                        <div class="form-group">
+                            <label>Kolom A - Item 1</label>
+                            <input type="text" class="matching-a" placeholder="Item A1">
+                        </div>
+                        <div class="form-group">
+                            <label>Kolom B - Item 1</label>
+                            <input type="text" class="matching-b" placeholder="Item B1">
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label>Kolom A - Item 2</label>
+                            <input type="text" class="matching-a" placeholder="Item A2">
+                        </div>
+                        <div class="form-group">
+                            <label>Kolom B - Item 2</label>
+                            <input type="text" class="matching-b" placeholder="Item B2">
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label>Kolom A - Item 3</label>
+                            <input type="text" class="matching-a" placeholder="Item A3">
+                        </div>
+                        <div class="form-group">
+                            <label>Kolom B - Item 3</label>
+                            <input type="text" class="matching-b" placeholder="Item B3">
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label>Kolom A - Item 4</label>
+                            <input type="text" class="matching-a" placeholder="Item A4">
+                        </div>
+                        <div class="form-group">
+                            <label>Kolom B - Item 4</label>
+                            <input type="text" class="matching-b" placeholder="Item B4">
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label>Kolom A - Item 5</label>
+                            <input type="text" class="matching-a" placeholder="Item A5">
+                        </div>
+                        <div class="form-group">
+                            <label>Kolom B - Item 5</label>
+                            <input type="text" class="matching-b" placeholder="Item B5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- D. Isian Singkat -->
+            <div class="section">
+                <div class="section-title">D. ISIAN SINGKAT</div>
+                <div id="isian-container"></div>
+                <button class="btn gray" onclick="addIsian()" style="width: 100%; margin-top: 10px;">+ Tambah Soal</button>
+            </div>
+
+            <!-- E. Uraian -->
+            <div class="section">
+                <div class="section-title">E. URAIAN</div>
+                <div id="uraian-container"></div>
+                <button class="btn gray" onclick="addUraian()" style="width: 100%; margin-top: 10px;">+ Tambah Soal</button>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <h1>Preview Soal</h1>
+            <div id="preview-content" class="print-content"></div>
+            <div class="export-btn-container">
+                <button class="btn btn-warning" onclick="printSoal()" style="font-size: 16px; padding: 15px 30px;">
+                    PRINT / EXPORT SOAL
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let pgCount = 0;
+        let bsCount = 0;
+        let isianCount = 0;
+        let uraianCount = 0;
+        let kopImage = '';
+        let menjodohkanImage = '';
+
+        // Upload KOP
+        document.getElementById('kop-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    kopImage = event.target.result;
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle Menjodohkan Image
+        function handleMenjodohkanImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    menjodohkanImage = event.target.result;
+                    document.getElementById('menjodohkan-img-preview').src = event.target.result;
+                    document.getElementById('menjodohkan-img-preview').style.display = 'block';
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Add Pilihan Ganda
+        function addPG() {
+            pgCount++;
+            const container = document.getElementById('pg-container');
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.id = 'pg-' + pgCount;
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Soal ${pgCount}</strong>
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="deletePG(${pgCount})">Hapus</button>
+                </div>
+                <div class="form-group">
+                    <label>Pertanyaan</label>
+                    <textarea class="pg-question" onchange="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Gambar Soal</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="pg-img-${pgCount}">
+                            Upload Gambar
+                        </label>
+                        <input type="file" id="pg-img-${pgCount}" class="pg-img" accept="image/*" onchange="handleImageUpload(this, 'pg-img-preview-${pgCount}')">
+                    </div>
+                    <img id="pg-img-preview-${pgCount}" class="image-preview" style="display:none;">
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Opsi</label>
+                    <select class="pg-options-count" onchange="updatePGOptions(${pgCount}, this.value)">
+                        <option value="4">4 Opsi (A-D)</option>
+                        <option value="5" selected>5 Opsi (A-E)</option>
+                    </select>
+                </div>
+                <div class="option-group" id="pg-options-${pgCount}"></div>
+            `;
+            container.appendChild(div);
+            updatePGOptions(pgCount, 5);
+        }
+
+        function deletePG(id) {
+            const element = document.getElementById('pg-' + id);
+            if (element) {
+                element.remove();
+                updatePreview();
+            }
+        }
+
+        function updatePGOptions(id, count) {
+            const container = document.getElementById('pg-options-' + id);
+            container.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+            for (let i = 0; i < count; i++) {
+                const div = document.createElement('div');
+                div.className = 'option-item';
+                div.innerHTML = `
+                    <strong>${letters[i]}.</strong>
+                    <input type="text" class="pg-option" placeholder="Opsi ${letters[i]}" style="flex: 1;" onchange="updatePreview()">
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="pg-opt-img-${id}-${i}">
+                            📁
+                        </label>
+                        <input type="file" id="pg-opt-img-${id}-${i}" class="pg-opt-img" accept="image/*" onchange="handleImageUpload(this, 'pg-opt-img-preview-${id}-${i}')">
+                    </div>
+                    <img id="pg-opt-img-preview-${id}-${i}" class="image-preview" style="display:none;">
+                `;
+                container.appendChild(div);
+            }
+            updatePreview();
+        }
+
+        // Add Benar-Salah
+        function addBS() {
+            bsCount++;
+            const container = document.getElementById('bs-container');
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.id = 'bs-' + bsCount;
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Pernyataan ${bsCount}</strong>
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="deleteBS(${bsCount})">Hapus</button>
+                </div>
+                <div class="form-group">
+                    <label>Pernyataan</label>
+                    <textarea class="bs-statement" onchange="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Gambar</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="bs-img-${bsCount}">
+                            Upload Gambar
+                        </label>
+                        <input type="file" id="bs-img-${bsCount}" class="bs-img" accept="image/*" onchange="handleImageUpload(this, 'bs-img-preview-${bsCount}')">
+                    </div>
+                    <img id="bs-img-preview-${bsCount}" class="image-preview" style="display:none;">
+                </div>
+            `;
+            container.appendChild(div);
+            updatePreview();
+        }
+
+        function deleteBS(id) {
+            const element = document.getElementById('bs-' + id);
+            if (element) {
+                element.remove();
+                updatePreview();
+            }
+        }
+
+        // Add Isian Singkat
+        function addIsian() {
+            isianCount++;
+            const container = document.getElementById('isian-container');
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.id = 'isian-' + isianCount;
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Soal ${isianCount}</strong>
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="deleteIsian(${isianCount})">Hapus</button>
+                </div>
+                <div class="form-group">
+                    <label>Pertanyaan</label>
+                    <textarea class="isian-question" onchange="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Gambar</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="isian-img-${isianCount}">
+                            Upload Gambar
+                        </label>
+                        <input type="file" id="isian-img-${isianCount}" class="isian-img" accept="image/*" onchange="handleImageUpload(this, 'isian-img-preview-${isianCount}')">
+                    </div>
+                    <img id="isian-img-preview-${isianCount}" class="image-preview" style="display:none;">
+                </div>
+            `;
+            container.appendChild(div);
+            updatePreview();
+        }
+
+        function deleteIsian(id) {
+            const element = document.getElementById('isian-' + id);
+            if (element) {
+                element.remove();
+                updatePreview();
+            }
+        }
+
+        // Add Uraian
+        function addUraian() {
+            uraianCount++;
+            const container = document.getElementById('uraian-container');
+            const div = document.createElement('div');
+            div.className = 'question-item';
+            div.id = 'uraian-' + uraianCount;
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Soal ${uraianCount}</strong>
+                    <button class="btn btn-danger btn-sm delete-btn" onclick="deleteUraian(${uraianCount})">Hapus</button>
+                </div>
+                <div class="form-group">
+                    <label>Pertanyaan</label>
+                    <textarea class="uraian-question" onchange="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Upload Gambar</label>
+                    <div class="file-input-wrapper">
+                        <label class="file-input-label" for="uraian-img-${uraianCount}">
+                            Upload Gambar
+                        </label>
+                        <input type="file" id="uraian-img-${uraianCount}" class="uraian-img" accept="image/*" onchange="handleImageUpload(this, 'uraian-img-preview-${uraianCount}')">
+                    </div>
+                    <img id="uraian-img-preview-${uraianCount}" class="image-preview" style="display:none;">
+                </div>
+            `;
+            container.appendChild(div);
+            updatePreview();
+        }
+
+        function deleteUraian(id) {
+            const element = document.getElementById('uraian-' + id);
+            if (element) {
+                element.remove();
+                updatePreview();
+            }
+        }
+
+        // Handle Image Upload
+        function handleImageUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById(previewId);
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Update Preview
+        function updatePreview() {
+            const preview = document.getElementById('preview-content');
+            let html = '';
+
+            // KOP Image
+            if (kopImage) {
+                html += `<img src="${kopImage}" class="kop-image" alt="KOP Sekolah">`;
+            }
+            
+            // Identity Section
+const judulUjian = document.getElementById('judul-ujian').value;
+const mataPelajaran = document.getElementById('mata-pelajaran').value;
+const kelas = document.getElementById('kelas').value;
+const waktu = document.getElementById('waktu').value;
+const semester = document.getElementById('semester').value;
+// Tambahkan Judul Ujian SEBELUM identity-section
+if (judulUjian) {
+    html += `<div style="text-align: center; font-size: 14pt; font-weight: bold; margin: 0px 0 0px 0; text-transform: uppercase;">${judulUjian}</div>`;
+}
+            if (mataPelajaran || kelas || waktu || semester) {
+                html += '<div class="identity-section">';
+                if (mataPelajaran) html += `<div style="text-align: left; font-size: 12pt; margin: 5px 0;">Mata Pelajaran: ${mataPelajaran}</div>`;
+                if (kelas) html += `<div style="text-align: left; font-size: 12pt; margin: 5px 0;">Kelas: ${kelas}</div>`;
+                if (waktu) html += `<div style="text-align: left; font-size: 12pt; margin: 5px 0;">Waktu: ${waktu}</div>`;
+                if (semester) html += `<div style="text-align: left; font-size: 12pt; margin: 5px 0;">Semester / Tahun Ajaran: ${semester}</div>`;
+                html += '</div>';
+            }
+
+            // Student Info
+            html += `
+                <div class="student-info">
+                    <div>Nama: ..............................</div>
+                    <div>No. Peserta: ..............................</div>
+                </div>
+            `;
+
+            // A. Pilihan Ganda
+            const pgQuestions = document.querySelectorAll('#pg-container .question-item');
+            if (pgQuestions.length > 0) {
+                html += '<div style="margin-top: 20px;"><strong style="font-size: 13pt;">A. PILIHAN GANDA</strong></div>';
+                html += '<div class="pg-columns">';
+                pgQuestions.forEach((q, index) => {
+                    const question = q.querySelector('.pg-question').value;
+                    const imgPreview = q.querySelector('.image-preview');
+                    const options = q.querySelectorAll('.pg-option');
+                    
+                    if (question || (imgPreview && imgPreview.style.display !== 'none')) {
+                        html += '<div class="pg-item">';
+                        html += `<div><span class="question-number">${index + 1}.</span>`;
+                        if (imgPreview && imgPreview.style.display !== 'none') {
+                            html += `<img src="${imgPreview.src}" class="question-image" alt="Gambar soal pilihan ganda nomor ${index + 1}">`;
+                        }
+                        html += `${question}</div>`;
+                        
+                        const letters = ['a', 'b', 'c', 'd', 'e'];
+                        options.forEach((opt, i) => {
+                            const optText = opt.value;
+                            const optImgPreview = document.getElementById(`pg-opt-img-preview-${q.id.split('-')[1]}-${i}`);
+                            if (optText || (optImgPreview && optImgPreview.style.display !== 'none')) {
+                                html += `<div style="margin-left: 20px;">${letters[i]}. `;
+                                if (optImgPreview && optImgPreview.style.display !== 'none') {
+                                    html += `<img src="${optImgPreview.src}" class="question-image" alt="Gambar opsi ${letters[i]} dari soal nomor ${index + 1}">`;
+                                }
+                                html += `${optText}</div>`;
+                            }
+                        });
+                        html += '</div>';
+                    }
+                });
+                html += '</div>';
+            }
+
+            // B. Benar-Salah
+            const bsQuestions = document.querySelectorAll('#bs-container .question-item');
+            if (bsQuestions.length > 0) {
+                html += '<div style="margin-top: 20px; page-break-inside: avoid;"><strong style="font-size: 13pt;">B. BENAR-SALAH</strong></div>';
+                html += '<table>';
+                html += '<tr><th style="width: 40px;">No</th><th>Pernyataan</th><th style="width: 70px;">Benar</th><th style="width: 70px;">Salah</th></tr>';
+                bsQuestions.forEach((q, index) => {
+                    const statement = q.querySelector('.bs-statement').value;
+                    const imgPreview = q.querySelector('.image-preview');
+                    if (statement || (imgPreview && imgPreview.style.display !== 'none')) {
+                        html += '<tr>';
+                        html += `<td style="text-align: center;">${index + 1}</td>`;
+                        html += '<td>';
+                        if (imgPreview && imgPreview.style.display !== 'none') {
+                            html += `<img src="${imgPreview.src}" class="question-image" alt="Gambar pernyataan benar salah nomor ${index + 1}">`;
+                        }
+                        html += statement;
+                        html += '</td>';
+                        html += '<td></td><td></td>';
+                        html += '</tr>';
+                    }
+                });
+                html += '</table>';
+            }
+
+            // C. Menjodohkan
+            const matchingA = document.querySelectorAll('.matching-a');
+            const matchingB = document.querySelectorAll('.matching-b');
+            let hasMatchingData = false;
+            for (let i = 0; i < 5; i++) {
+                if (matchingA[i].value || matchingB[i].value) {
+                    hasMatchingData = true;
+                    break;
+                }
+            }
+            
+            if (hasMatchingData || menjodohkanImage) {
+                html += '<div style="margin-top: 20px; page-break-inside: avoid;"><strong style="font-size: 13pt;">C. MENJODOHKAN</strong></div>';
+                if (menjodohkanImage) {
+                    html += `<img src="${menjodohkanImage}" class="question-image" alt="Gambar soal menjodohkan" style="margin-bottom: 10px;">`;
+                }
+                html += '<table class="matching-table">';
+                html += '<tr><th style="width: 45%;">Kolom A</th><th style="width: 5%;"></th><th style="width: 5%;"></th><th style="width: 45%;">Kolom B</th></tr>';
+                for (let i = 0; i < 5; i++) {
+                    const textA = matchingA[i].value;
+                    const textB = matchingB[i].value;
+                    if (textA || textB) {
+                        html += '<tr>';
+                        html += `<td>${i + 1}. ${textA}</td>`;
+                        html += '<td class="matching-box"></td>';
+                        html += '<td class="matching-box"></td>';
+                        html += `<td>${i + 1}. ${textB}</td>`;
+                        html += '</tr>';
+                    }
+                }
+                html += '</table>';
+            }
+
+            // D. Isian Singkat
+            const isianQuestions = document.querySelectorAll('#isian-container .question-item');
+            if (isianQuestions.length > 0) {
+                html += '<div style="margin-top: 20px;"><strong style="font-size: 13pt;">D. ISIAN SINGKAT</strong></div>';
+                isianQuestions.forEach((q, index) => {
+                    const question = q.querySelector('.isian-question').value;
+                    const imgPreview = q.querySelector('.image-preview');
+                    if (question || (imgPreview && imgPreview.style.display !== 'none')) {
+                        html += `<div style="margin: 10px 0;"><span class="question-number">${index + 1}.</span>`;
+                        if (imgPreview && imgPreview.style.display !== 'none') {
+                            html += `<img src="${imgPreview.src}" class="question-image" alt="Gambar soal isian singkat nomor ${index + 1}">`;
+                        }
+                        html += `${question}</div>`;
+                        html += '<div class="answer-space"></div>';
+                    }
+                });
+            }
+
+            // E. Uraian
+            const uraianQuestions = document.querySelectorAll('#uraian-container .question-item');
+            if (uraianQuestions.length > 0) {
+                html += '<div style="margin-top: 20px;"><strong style="font-size: 13pt;">E. URAIAN</strong></div>';
+                uraianQuestions.forEach((q, index) => {
+                    const question = q.querySelector('.uraian-question').value;
+                    const imgPreview = q.querySelector('.image-preview');
+                    if (question || (imgPreview && imgPreview.style.display !== 'none')) {
+                        html += `<div style="margin: 10px 0;"><span class="question-number">${index + 1}.</span>`;
+                        if (imgPreview && imgPreview.style.display !== 'none') {
+                            html += `<img src="${imgPreview.src}" class="question-image" alt="Gambar soal uraian nomor ${index + 1}">`;
+                        }
+                        html += `${question}</div>`;
+                        html += '<div class="answer-space answer-space-large"></div>';
+                    }
+                });
+            }
+
+            preview.innerHTML = html;
+        }
+
+        // Simple Print Function - Always Works!
+        function printSoal() {
+            const exportBtn = document.querySelector('.export-btn-container button');
+            const originalText = exportBtn.innerHTML;
+            exportBtn.innerHTML = '🖨️ Membuka Print...';
+            exportBtn.disabled = true;
+            
+            setTimeout(() => {
+                window.print();
+                showMessage('📄 Dialog print terbuka! Pilih "Save as PDF" atau printer untuk mencetak', 'success');
+                
+                setTimeout(() => {
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.disabled = false;
+                }, 2000);
+            }, 500);
+        }
+
+        // Show message function
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                max-width: 300px;
+                word-wrap: break-word;
+                ${type === 'success' ? 'background-color: #28a745;' : 'background-color: #dc3545;'}
+            `;
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (document.body.contains(messageDiv)) {
+                    document.body.removeChild(messageDiv);
+                }
+            }, 5000);
+        }
+
+        // Auto-update on input changes
+        document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('judul-ujian').addEventListener('input', updatePreview);
+        document.getElementById('mata-pelajaran').addEventListener('input', updatePreview);
+        document.getElementById('kelas').addEventListener('input', updatePreview);
+        document.getElementById('waktu').addEventListener('input', updatePreview);
+        document.getElementById('semester').addEventListener('input', updatePreview);
+    
+        document.querySelectorAll('.matching-a, .matching-b').forEach(input => {
+            input.addEventListener('input', updatePreview);
+            });
+        });
+
+        // Initial preview
+        updatePreview();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'995a492913b39de3',t:'MTc2MTY1Mjk2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
